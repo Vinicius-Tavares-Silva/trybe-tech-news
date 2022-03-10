@@ -1,4 +1,5 @@
 import requests
+import parsel
 import time
 
 
@@ -18,7 +19,14 @@ def fetch(url):
 
 # Requisito 2
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    news = []
+    if html_content == '':
+        return news
+    selector = parsel.Selector(html_content)
+    for tec in selector.css('div.tec--list'):
+        links = tec.css('a.tec--card__title__link::attr(href)').getall()
+    news = links
+    return news
 
 
 # Requisito 3
@@ -34,3 +42,7 @@ def scrape_noticia(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+
+
+html = fetch('https://www.tecmundo.com.br/novidades')
+scrape_novidades(html)
