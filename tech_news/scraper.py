@@ -93,6 +93,3 @@ def scrape_noticia(html_content):
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
 
-
-# html = fetch('https://www.tecmundo.com.br/dispositivos-moveis/215327-pixel-5a-tera-lancamento-limitado-devido-escassez-chips.htm')
-# scrape_noticia(html)
