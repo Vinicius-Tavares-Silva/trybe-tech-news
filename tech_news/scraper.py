@@ -2,6 +2,8 @@ import requests
 import parsel
 import time
 
+from tech_news.database import create_news
+
 
 # Requisito 1
 def fetch(url):
@@ -39,7 +41,9 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def strip_string(text):
-    return text.strip()
+    if isinstance(text, str):
+        return text.strip()
+    return text
 
 
 def format_counters(counter):
@@ -68,11 +72,14 @@ def scrape_noticia(html_content):
 
     article_toolbar = selector.css('nav.tec--toolbar')
     shares_count = article_toolbar.css('div.tec--toolbar__item::text').get()
-    comments_count = article_toolbar.css('button.tec--btn::text').get()
+    comments_count = article_toolbar.css(
+        '#js-comments-btn::attr(data-count)'
+    ).get()
 
-    article_body = selector.css('div.tec--article__body')
-    summary_tag = article_body.css('p:first-child *::text').getall()
-    summary = ''.join(summary_tag)
+    article_body = selector.css(
+        '.tec--article__body > p:first-child *::text'
+    ).getall()
+    summary = ''.join(article_body)
 
     url = selector.css('link[rel=canonical]::attr(href)').get()
     news = {
@@ -81,7 +88,7 @@ def scrape_noticia(html_content):
         'timestamp': timestamp,
         'writer': strip_string(writer),
         'shares_count': format_counters(shares_count),
-        'comments_count': format_counters(comments_count),
+        'comments_count': int(comments_count),
         'summary': summary,
         'sources': format_array(sources),
         'categories': format_array(categories)
@@ -90,5 +97,30 @@ def scrape_noticia(html_content):
 
 
 # Requisito 5
+def define_page(html):
+    if html == '':
+        page = fetch('https://www.tecmundo.com.br/novidades')
+    else:
+        next_page = scrape_next_page_link(html)
+        page = fetch(next_page)
+    return page
+
+
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    news_list = []
+    news_links = []
+    html = ''
+    while len(news_links) < amount:
+        html = define_page(html)
+
+        page_links = scrape_novidades(html)
+        for link in page_links:
+            if len(news_links) < amount:
+                news_links.append(link)
+
+    for link in news_links:
+        html = fetch(link)
+        news_list.append(scrape_noticia(html))
+
+    create_news(news_list)
+    return news_list
