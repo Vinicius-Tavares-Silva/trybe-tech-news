@@ -34,9 +34,23 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    news = []
+    news_found = []
+
+    news_found = search_news({
+        'sources': {'$regex': source, '$options': 'i'}
+    })
+    news = list(map(lambda news: (news['title'], news['url']), news_found))
+    return news
 
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    news = []
+    news_found = []
+
+    news_found = search_news({
+        'categories': {'$regex': category, '$options': 'i'}
+    })
+    news = list(map(lambda news: (news['title'], news['url']), news_found))
+    return news
