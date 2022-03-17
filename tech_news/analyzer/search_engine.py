@@ -1,6 +1,16 @@
+from tech_news.database import search_news
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    news = []
+    news_found = []
+
+    news_found = search_news({
+        'title': {'$regex': title, '$options': 'i'}
+    })
+    news = list(map(lambda news: (news['title'], news['url']), news_found))
+    return news
 
 
 # Requisito 7
