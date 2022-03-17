@@ -1,4 +1,3 @@
-import string
 import requests
 import parsel
 import time
@@ -42,17 +41,20 @@ def scrape_next_page_link(html_content):
 def strip_string(text):
     return text.strip()
 
+
 def format_counters(counter):
     if (not counter):
         return 0
-    number =  ''.join(filter(lambda char: char.isdigit(), counter))
+    number = ''.join(filter(lambda char: char.isdigit(), counter))
     if (number == ''):
         return 0
     return int(number)
 
+
 def format_array(array):
     result = map(strip_string, array)
     return list(result)
+
 
 def scrape_noticia(html_content):
     selector = parsel.Selector(html_content)
@@ -86,10 +88,11 @@ def scrape_noticia(html_content):
     }
     return news
 
+
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
 
 
-html = fetch('https://www.tecmundo.com.br/dispositivos-moveis/215327-pixel-5a-tera-lancamento-limitado-devido-escassez-chips.htm')
-scrape_noticia(html)
+# html = fetch('https://www.tecmundo.com.br/dispositivos-moveis/215327-pixel-5a-tera-lancamento-limitado-devido-escassez-chips.htm')
+# scrape_noticia(html)
